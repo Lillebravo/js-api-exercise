@@ -49,21 +49,60 @@ function createUserPage(user, posts) {
 }
 
 export async function getAllUsers() {
-  const res = await fetch(baseURL + "/users");
-  const users = await res.json();
-  return users;
+  // Check if users are in localStorage
+  const cachedUsers = localStorage.getItem("users");
+  
+  if (cachedUsers) {
+    // If cached, return parsed users
+    return JSON.parse(cachedUsers);
+  } else {
+    // If not cached, fetch from API
+    const res = await fetch(baseURL + "users");
+    const users = await res.json();
+    
+    // Save to localStorage for future use
+    localStorage.setItem("users", JSON.stringify(users));
+    
+    return users;
+  }
 }
 
 async function getUserById(userId) {
-  const res = await fetch(baseURL + `/users/${userId}`);
-  const user = await res.json();
-  return user;
+  // Check if user is in localStorage
+  const cachedUser = localStorage.getItem(`user_${userId}`);
+  
+  if (cachedUser) {
+    // If cached, return parsed user
+    return JSON.parse(cachedUser);
+  } else {
+    // If not cached, fetch from API
+    const res = await fetch(baseURL + `users/${userId}`);
+    const user = await res.json();
+    
+    // Save to localStorage for future use
+    localStorage.setItem(`user_${userId}`, JSON.stringify(user));
+    
+    return user;
+  }
 }
 
 async function getUserPosts(userId) {
-  const res = await fetch(baseURL + `/users/${userId}/posts`);
-  const posts = await res.json();
-  return posts;
+  // Check if posts are in localStorage
+  const cachedPosts = localStorage.getItem(`${userId}_posts`);
+  
+  if (cachedPosts) {
+    // If cached, return parsed posts
+    return JSON.parse(cachedPosts);
+  } else {
+    // If not cached, fetch from API
+    const res = await fetch(baseURL + `users/${userId}/posts`);
+    const posts = await res.json();
+    
+    // Save to localStorage for future use
+    localStorage.setItem(`${userId}_posts`, JSON.stringify(posts));
+    
+    return posts;
+  }
 }
 
 function handleBackButtonClick() {
