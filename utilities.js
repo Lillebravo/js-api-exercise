@@ -1,6 +1,6 @@
 import { loader, main } from "./index.js";
 
-const baseURL = "https://jsonplaceholder.typicode.com";
+const baseURL = "https://jsonplaceholder.typicode.com/";
 
 function createUserCard(user) {
   const card = /*html*/ `
@@ -47,11 +47,20 @@ async function getUserById(userId) {
   return user;
 }
 
+function handleBackButtonClick() {
+  getAllUsers().then((users) => {
+    insertUsersToDOM(users);
+  });
+}
+
 function handleOnCardClick(card) {
   insertLoaderToDOM();
   getUserById(card.id).then((user) => {
     const userPageAsHtmlString = createUserPage(user);
     main.innerHTML = userPageAsHtmlString;
+
+    const backBtn = main.querySelector("#back-btn");
+    backBtn.addEventListener("click", handleBackButtonClick);
   });
 }
 

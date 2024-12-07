@@ -1,4 +1,4 @@
-import { getAllUsers, handleOnClick, insertUsersToDOM } from "./utilties.js";
+import { getAllUsers, handleOnClick, insertUsersToDOM } from "./utilities.js";
 
 export const loader = document.querySelector(".loader");
 export const main = document.querySelector("main");
