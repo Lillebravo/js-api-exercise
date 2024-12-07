@@ -1,4 +1,4 @@
-import { loader, main } from "./index.js";
+import { loader, main, userHeader } from "./index.js";
 
 const baseURL = "https://jsonplaceholder.typicode.com/";
 
@@ -16,6 +16,16 @@ function createUserCard(user) {
 }
 
 function createUserPage(user, posts) {
+  const firstName = user.name.split(" ")[0];
+  const lastLetter = firstName[firstName.length - 1];
+
+  // Check if the first name ends with one of the letters the female names ends with
+  if (lastLetter === "a" || lastLetter === "e" || lastLetter === "y" || lastLetter === ".") {
+    userHeader.innerHTML = "Mrs:";
+  } else {
+    userHeader.innerHTML = "Mr:"
+  }
+
   const postsHtml = posts
     .map(
       (post, index) => /*html*/ `<article class="post">
@@ -137,6 +147,7 @@ function insertLoaderToDOM() {
 }
 
 export function insertUsersToDOM(users) {
+  userHeader.innerHTML = "Users";
   const usersAsHtmlString = users.map((user) => createUserCard(user)).join("");
   main.innerHTML = usersAsHtmlString;
 }
