@@ -15,7 +15,16 @@ function createUserCard(user) {
   return card;
 }
 
-function createUserPage(user) {
+function createUserPage(user, posts) {
+  const postsHtml = posts
+    .map(
+      (post, index) => /*html*/ `<article class="post">
+    <h4 class="post-title">Post ${index + 1}: ${post.title}</h4>
+    <p class="post-body">${post.body}</p>
+  </article>`
+    )
+    .join("");
+
   const userPage = /*html*/ `
     <section class="user-page">
       <h3 class="name">${user.name}</h3>
@@ -25,6 +34,10 @@ function createUserPage(user) {
       <div class="address">
         <p>${user.address.city}</p>
         <p>${user.address.street}</p>
+      </div>
+      <div class="posts">
+        <h3>~Posts~</h3>
+        ${postsHtml}
       </div>
       <div class="actions">
         <button id="back-btn">Back to user list</button>
@@ -47,6 +60,12 @@ async function getUserById(userId) {
   return user;
 }
 
+async function getUserPosts(userId) {
+  const res = await fetch(baseURL + `/users/${userId}/posts`);
+  const posts = await res.json();
+  return posts;
+}
+
 function handleBackButtonClick() {
   getAllUsers().then((users) => {
     insertUsersToDOM(users);
@@ -55,13 +74,17 @@ function handleBackButtonClick() {
 
 function handleOnCardClick(card) {
   insertLoaderToDOM();
-  getUserById(card.id).then((user) => {
-    const userPageAsHtmlString = createUserPage(user);
-    main.innerHTML = userPageAsHtmlString;
+  const userId = card.id;
 
-    const backBtn = main.querySelector("#back-btn");
-    backBtn.addEventListener("click", handleBackButtonClick);
-  });
+  Promise.all([getUserById(userId), getUserPosts(userId)]).then(
+    ([user, posts]) => {
+      const userPageAsHtmlString = createUserPage(user, posts);
+      main.innerHTML = userPageAsHtmlString;
+
+      const backBtn = main.querySelector("#back-btn");
+      backBtn.addEventListener("click", handleBackButtonClick);
+    }
+  );
 }
 
 export function handleOnClick(event) {
